@@ -85,17 +85,9 @@ window.onload = function() {
 
     // Add Anime From URL
     function addAnimeFromUrl(url) {
-        const baseUrl = "https://anitaku.bz/category/";
-        if (!url.startsWith(baseUrl)) {
-            alert("Invalid URL! Only URLs from anitaku.bz are supported.");
-            return;
-        }
-
-        const slug = url.replace(baseUrl, "").trim();
-        const title = slug.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
-        const imgUrl = `https://gogocdn.net/cover/${slug}.jpg`;
-
-        animeList.push({ title, slug, img: imgUrl, link: url });
+        const newAnime = getNewAnime();
+        newAnime.link = url
+        animeList.push(newAnime);
         saveAnimeList(); // Save updated list to localStorage
         renderAnimeList(); // Re-render the grid
     }
