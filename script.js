@@ -1,5 +1,5 @@
-import { defaultAnimeList, getNewAnime } from "./animelist";
-import { isValidURL } from "./utils";
+import { defaultAnimeList, getNewAnime } from "./animelist.js";
+import { isValidURL } from "./utils.js";
 
 document.onload(() => {
     // Load Anime List from localStorage or Default
