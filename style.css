@@ -1,0 +1,138 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1e1e2f;
+    color: #fff;
+    padding: 20px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+
+@keyframes skeleton-loading {
+    from {
+        background-position: 200% 0;
+    }
+    to {
+        background-position: -200% 0;
+    }
+}
+
+.grid .tile {
+    width: 100%; /* Ensure it fills the grid cell */
+    padding-top: 133.33%; /* 4:3 aspect ratio (100% * height/width) */
+    background-color: rgba(0, 0, 0, 0.427); /* Placeholder for your portrait images */
+    position: relative;
+}
+
+.grid .tile::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.tile button.btn_remove {
+    padding: 10px;
+    position: absolute;
+    top: 0;
+    z-index: 1;
+    background: transparent;
+    border: none;
+    display: none;
+}
+
+.tile:hover button.btn_remove {
+    display: unset;
+}
+
+button.btn_remove:hover {
+    transform: scale(1.5);
+    transition: 0.5s all ease-in;
+}
+
+button.btn_new {
+    position: fixed;
+    bottom: 50px;
+    right: 50px;
+    height: 50px;
+    width: 50px;
+    border: none;
+    background: lightgray;
+    border-radius: 100%;
+    font-size: large;
+}
+
+button.btn_new:hover {
+    transform: scale(1.5);
+}
+
+.tile {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s, box-shadow 0.3s;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+}
+
+.tile .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    opacity: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 10px;
+    transition: opacity 0.3s;
+}
+
+.tile:hover .overlay {
+    opacity: 1;
+}
+
+.tile.dragover {
+    border: 2px dashed #ff6f61;
+}
+
+.dropzone {
+    margin-top: 20px;
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    background-color: #29293f;
+    color: #999;
+    font-size: 1rem;
+}
+
+.dropzone.dragover {
+    background-color: #e0ffe0;
+    border-color: #33cc33;
+    color: #333;
+}
