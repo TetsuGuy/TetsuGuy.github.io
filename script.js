@@ -1,7 +1,7 @@
 import { defaultAnimeList, getNewAnime } from "./animelist.js";
 import { isValidURL } from "./utils.js";
 
-document.onload(() => {
+window.onload = function() {
     // Load Anime List from localStorage or Default
     let animeList = JSON.parse(localStorage.getItem("animeList")) || defaultAnimeList;
 
@@ -129,5 +129,4 @@ document.onload(() => {
 
     // Initial Render
     renderAnimeList();
-})
-
+}
