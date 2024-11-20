@@ -27,15 +27,30 @@ const Database = (() => {
     };
 
     const saveImage = (id, imageBlob) => {
-        const transaction = db.transaction("images", "readwrite");
-        const store = transaction.objectStore("images");
-        return store.put({ id, imageBlob });
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction("images", "readwrite");
+            const store = transaction.objectStore("images");
+            const request = store.put({ id, imageBlob });
+            request.onsuccess = () => resolve(); // Resolve the promise on success
+            request.onerror = (event) => reject(event.target.error); // Reject on error
+        })
+        
     };
 
     const loadImage = (id) => {
-        const transaction = db.transaction("images", "readonly");
-        const store = transaction.objectStore("images");
-        return store.get(id).then((result) => result?.imageBlob || null);
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction("images", "readonly");
+            const store = transaction.objectStore("images");
+            const request = store.get(id);
+    
+            request.onsuccess = () => {
+                resolve(request.result?.imageBlob || null); // Resolve with the imageBlob or null
+            };
+    
+            request.onerror = (event) => {
+                reject(event.target.error); // Reject with error
+            };
+        });
     };
 
     const saveAllAnime = (animeList) => {
@@ -43,7 +58,6 @@ const Database = (() => {
             const transaction = db.transaction("animeList", "readwrite");
             const store = transaction.objectStore("animeList");
             const request = store.put({ id: "animeList", data: animeList });
-    
             request.onsuccess = () => resolve(); // Resolve the promise on success
             request.onerror = (event) => reject(event.target.error); // Reject on error
         });
