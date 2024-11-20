@@ -39,15 +39,31 @@ const Database = (() => {
     };
 
     const saveAllAnime = (animeList) => {
-        const transaction = db.transaction("animeList", "readwrite");
-        const store = transaction.objectStore("animeList");
-        return store.put({ id: "animeList", data: animeList });
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction("animeList", "readwrite");
+            const store = transaction.objectStore("animeList");
+            const request = store.put({ id: "animeList", data: animeList });
+    
+            request.onsuccess = () => resolve(); // Resolve the promise on success
+            request.onerror = (event) => reject(event.target.error); // Reject on error
+        });
     };
+    
 
     const getAllAnime = () => {
-        const transaction = db.transaction("animeList", "readonly");
-        const store = transaction.objectStore("animeList");
-        return store.get("animeList").then((result) => result?.data || []);
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction("animeList", "readonly");
+            const store = transaction.objectStore("animeList");
+            const request = store.get("animeList");
+    
+            request.onsuccess = () => {
+                resolve(request.result?.data || []);
+            };
+    
+            request.onerror = (event) => {
+                reject(event.target.error);
+            };
+        });
     };
 
     return {
