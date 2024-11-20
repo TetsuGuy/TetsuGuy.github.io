@@ -30,28 +30,34 @@ const Database = (() => {
         return new Promise((resolve, reject) => {
             const transaction = db.transaction("images", "readwrite");
             const store = transaction.objectStore("images");
-            const request = store.put({ id, imageBlob });
-
+            const request = store.put({ id, imageBlob }); // Directly store the Blob
+    
             request.onsuccess = () => resolve();
             request.onerror = (event) => reject(event.target.error);
         });
     };
+    
 
     const loadImage = (id) => {
         return new Promise((resolve, reject) => {
             const transaction = db.transaction("images", "readonly");
             const store = transaction.objectStore("images");
             const request = store.get(id);
-
+    
             request.onsuccess = () => {
-                resolve(request.result?.imageBlob || null);
+                if (request.result) {
+                    resolve(request.result.imageBlob); // Return the Blob object
+                } else {
+                    resolve(null); // No image found, resolve with null
+                }
             };
-
+    
             request.onerror = (event) => {
                 reject(event.target.error);
             };
         });
     };
+    
 
     const saveAllAnime = (animeList) => {
         return new Promise((resolve, reject) => {

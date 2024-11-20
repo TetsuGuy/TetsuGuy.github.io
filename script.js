@@ -1,6 +1,13 @@
-import { defaultAnimeList, getNewAnime } from "./animelist.js";
 import { isValidURL } from "./utils.js";
 import Database from "./database.js";
+
+const getNewAnime = () => (
+    { 
+        title: "", 
+        img: "", 
+        link: ""
+    }
+)
 
 window.onload = function() {
     let animeList = [];
@@ -13,11 +20,11 @@ window.onload = function() {
     function loadAnimeList() {
         return Database.getAllAnime()
             .then((list) => {
-                animeList = list.length ? list : defaultAnimeList;
+                animeList = list.length ? list : [];
             })
             .catch((error) => {
                 console.error("Error loading anime list:", error);
-                animeList = defaultAnimeList;
+                animeList = [];
             });
     }
 
@@ -40,7 +47,13 @@ window.onload = function() {
             if (anime.img) {
                 Database.loadImage(anime.img)
                     .then((imageBlob) => {
-                        tile.style.backgroundImage = `url(${imageBlob || ""})`;
+                        if (imageBlob && imageBlob.type.startsWith("image/")) {
+                            const imageURL = URL.createObjectURL(imageBlob);
+                            tile.style.backgroundImage = `url(${imageURL})`;
+                        } else {
+                            console.warn("Invalid Blob data:", imageBlob);
+                            tile.style.backgroundImage = `url('default-image.png')`; // Fallback image
+                        }
                     })
                     .catch(() => {
                         tile.style.backgroundImage = `url('default-image.png')`; // Fallback image
@@ -77,9 +90,7 @@ window.onload = function() {
                     const reader = new FileReader();
                     reader.onload = () => {
                         const id = `img-${Date.now()}`;
-                        const imageBlob = reader.result;
-
-                        Database.saveImage(id, imageBlob)
+                        Database.saveImage(id, file) // Save the raw Blob directly
                             .then(() => {
                                 animeList[index].img = id;
                                 saveAnimeList();
