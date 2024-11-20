@@ -31,10 +31,10 @@ const Database = (() => {
             const transaction = db.transaction("images", "readwrite");
             const store = transaction.objectStore("images");
             const request = store.put({ id, imageBlob });
-            request.onsuccess = () => resolve(); // Resolve the promise on success
-            request.onerror = (event) => reject(event.target.error); // Reject on error
-        })
-        
+
+            request.onsuccess = () => resolve();
+            request.onerror = (event) => reject(event.target.error);
+        });
     };
 
     const loadImage = (id) => {
@@ -42,13 +42,13 @@ const Database = (() => {
             const transaction = db.transaction("images", "readonly");
             const store = transaction.objectStore("images");
             const request = store.get(id);
-    
+
             request.onsuccess = () => {
-                resolve(request.result?.imageBlob || null); // Resolve with the imageBlob or null
+                resolve(request.result?.imageBlob || null);
             };
-    
+
             request.onerror = (event) => {
-                reject(event.target.error); // Reject with error
+                reject(event.target.error);
             };
         });
     };
@@ -58,22 +58,22 @@ const Database = (() => {
             const transaction = db.transaction("animeList", "readwrite");
             const store = transaction.objectStore("animeList");
             const request = store.put({ id: "animeList", data: animeList });
-            request.onsuccess = () => resolve(); // Resolve the promise on success
-            request.onerror = (event) => reject(event.target.error); // Reject on error
+
+            request.onsuccess = () => resolve();
+            request.onerror = (event) => reject(event.target.error);
         });
     };
-    
 
     const getAllAnime = () => {
         return new Promise((resolve, reject) => {
             const transaction = db.transaction("animeList", "readonly");
             const store = transaction.objectStore("animeList");
             const request = store.get("animeList");
-    
+
             request.onsuccess = () => {
                 resolve(request.result?.data || []);
             };
-    
+
             request.onerror = (event) => {
                 reject(event.target.error);
             };
