@@ -66,15 +66,15 @@ button.btn_remove:hover {
 }
 
 button.btn_new {
-    position: fixed;
-    bottom: 50px;
-    right: 50px;
     height: 50px;
     width: 50px;
-    border: none;
-    background: lightgray;
-    border-radius: 100%;
+    background: transparent;
     font-size: large;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    border: none;
+    transition: all 0.5s ease-in-out;
 }
 
 button.btn_new:hover {
