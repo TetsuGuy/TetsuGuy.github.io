@@ -29,7 +29,6 @@ body {
 
 .grid .tile {
     width: 100%; /* Ensure it fills the grid cell */
-    padding-top: 133.33%; /* 4:3 aspect ratio (100% * height/width) */
     background-color: rgba(0, 0, 0, 0.427); /* Placeholder for your portrait images */
     position: relative;
 }
