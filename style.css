@@ -142,3 +142,30 @@ button.btn_new:hover {
     border-color: #33cc33;
     color: #333;
 }
+
+.shuffle-anim {
+    animation: 1s shuffle;
+}
+
+@keyframes shuffle {
+    0% {
+        transform: scaleX(1);
+        filter: brightness(1);
+    }
+    25% {
+        transform: scaleX(0);
+        filter: brightness(0.5) blur(5px);
+    }
+    50% {
+        transform: scaleX(-1);
+        filter: brightness(1);
+    }
+    75% {
+        transform: scaleX(0);
+        filter: brightness(0.5) blur(5px);
+    }
+    100% {
+        transform: scaleX(1);
+        filter: brightness(1);
+    }
+}

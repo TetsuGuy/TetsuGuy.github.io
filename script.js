@@ -78,6 +78,10 @@ window.onload = function() {
                 tile.classList.remove('dragover');
             });
 
+            tile.addEventListener("mouseleave", () => {
+                addShuffleAnimation(tile, 2000);
+            })
+
             tile.addEventListener('drop', (event) => {
                 event.preventDefault();
                 tile.classList.remove('dragover');
@@ -169,4 +173,25 @@ window.onload = function() {
         .then(() => loadAnimeList())
         .then(() => renderAnimeList())
         .catch((error) => console.error("Initialization failed:", error));
+    
+    
+    // trigger animation loop (1 minute)
+    setInterval(() => {
+        const tiles = document.getElementsByClassName("tile");
+        Array.from(tiles).forEach((tile, index) => {
+            setTimeout(() => {
+                addShuffleAnimation(tile, 2000);
+            }, 250*index);
+        })
+    }, 60000) 
+
+    function addShuffleAnimation(tile, removeTime = 2000) {
+        if (tile.classList.contains("shuffle-anim")) {
+            return
+        }
+        tile.classList.add("shuffle-anim");
+        setTimeout(() => {
+            tile.classList.remove("shuffle-anim");
+        }, removeTime)
+    }
 };
