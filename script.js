@@ -1,6 +1,8 @@
 import { isValidURL } from "./utils.js";
 import Database from "./database.js";
 
+const ANIM_BETWEEN_TIME = 250;
+
 const getNewAnime = () => (
     { 
         title: "", 
@@ -11,10 +13,37 @@ const getNewAnime = () => (
 
 window.onload = function() {
     let animeList = [];
-
     const animeGrid = document.getElementById('animeGrid');
+
     const dropZone = document.getElementById('dropZone');
+    // Drag-and-drop handling for the drop zone
+    dropZone.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        dropZone.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('dragover');
+    });
+    dropZone.addEventListener('drop', (event) => {
+        event.preventDefault();
+        dropZone.classList.remove('dragover');
+
+        const url = event.dataTransfer.getData("text");
+        if (url) {
+            addAnimeFromUrl(url);
+        } else {
+            alert("Please drop a valid URL.");
+        }
+    });
+
     const btnNew = document.getElementById('btnNew');
+    // Add a new empty anime
+    btnNew.addEventListener("click", () => {
+        animeList.push(getNewAnime());
+        saveAnimeList();
+        renderAnimeList();
+    });
 
     // Load anime list from IndexedDB
     function loadAnimeList() {
@@ -36,7 +65,7 @@ window.onload = function() {
     }
 
     // Render the anime list
-    function renderAnimeList() {
+    function renderAnimeList(fadeIn = false) {
         animeGrid.innerHTML = "";
         animeList.forEach((anime, index) => {
             const tile = document.createElement('div');
@@ -79,7 +108,10 @@ window.onload = function() {
             });
 
             tile.addEventListener("mouseleave", () => {
-                addShuffleAnimation(tile, 2000);
+                const result = animateTile(tile, "shuffle-anim")
+                setTimeout(() => {
+                    result.remove();
+                }, 2000)
             })
 
             tile.addEventListener('drop', (event) => {
@@ -114,7 +146,19 @@ window.onload = function() {
                 }
             });
 
-            // Remove button
+            if (fadeIn) {
+                tile.style.setProperty("opacity", 0);
+                const result = animateTile(tile, "fade-in-anim", index * ANIM_BETWEEN_TIME);
+                setTimeout(() =>{
+                    result.remove();
+                    tile.style.setProperty("opacity", 1);
+                }, 1000+index * ANIM_BETWEEN_TIME)
+            }
+
+            setInterval(() => {
+                animateTile(tile, "shuffle-anim", index * ANIM_BETWEEN_TIME);
+            }, 60000);
+
             const removeButton = document.createElement("button");
             removeButton.innerHTML = "❌";
             removeButton.classList.add("btn_remove");
@@ -127,7 +171,7 @@ window.onload = function() {
             tile.appendChild(removeButton);
 
             animeGrid.appendChild(tile);
-        });
+        })
     }
 
     // Add a new anime
@@ -139,59 +183,20 @@ window.onload = function() {
         renderAnimeList();
     }
 
-    // Drag-and-drop handling for the drop zone
-    dropZone.addEventListener('dragover', (event) => {
-        event.preventDefault();
-        dropZone.classList.add('dragover');
-    });
-
-    dropZone.addEventListener('dragleave', () => {
-        dropZone.classList.remove('dragover');
-    });
-
-    dropZone.addEventListener('drop', (event) => {
-        event.preventDefault();
-        dropZone.classList.remove('dragover');
-
-        const url = event.dataTransfer.getData("text");
-        if (url) {
-            addAnimeFromUrl(url);
-        } else {
-            alert("Please drop a valid URL.");
+    function animateTile(tile, animation, delayTime = 0) {
+        if (tile.classList.contains(animation)) {
+            return
         }
-    });
-
-    // Add a new empty anime
-    btnNew.addEventListener("click", () => {
-        animeList.push(getNewAnime());
-        saveAnimeList();
-        renderAnimeList();
-    });
+        tile.classList.add(animation);
+        tile.style.setProperty("--animation-delay", `${delayTime}ms`);
+        return { remove() {
+            tile.classList.remove(animation)
+        }}
+    }
 
     // Initialize the database and load the anime list
     Database.init()
-        .then(() => loadAnimeList())
-        .then(() => renderAnimeList())
-        .catch((error) => console.error("Initialization failed:", error));
-    
-    
-    // trigger animation loop (1 minute)
-    setInterval(() => {
-        const tiles = document.getElementsByClassName("tile");
-        Array.from(tiles).forEach((tile, index) => {
-            setTimeout(() => {
-                addShuffleAnimation(tile, 2000);
-            }, 250*index);
-        })
-    }, 60000) 
-
-    function addShuffleAnimation(tile, removeTime = 2000) {
-        if (tile.classList.contains("shuffle-anim")) {
-            return
-        }
-        tile.classList.add("shuffle-anim");
-        setTimeout(() => {
-            tile.classList.remove("shuffle-anim");
-        }, removeTime)
-    }
+    .then(() => loadAnimeList())
+    .then(() => renderAnimeList(true))
+    .catch((error) => console.error("Initialization failed:", error));
 };

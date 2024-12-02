@@ -169,3 +169,18 @@ button.btn_new:hover {
         filter: brightness(1);
     }
 }
+
+.fade-in-anim {
+    animation: 1s fade-in var(--animation-delay, 0s);
+}
+
+@keyframes fade-in {
+    0% {
+        transform: translateX(-50px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
